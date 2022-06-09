@@ -18,6 +18,6 @@ Route::namespace('API')->group(function () {
     Route::post('auth/login', 'AuthController@login');
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('auth/me', 'AuthController@me');
-        Route::post('auth/logout', 'AuthController@logaut');
+        Route::post('auth/logout', 'AuthController@logout');
     });
 });

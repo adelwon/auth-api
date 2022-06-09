@@ -15,7 +15,6 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users|max:255',
@@ -65,5 +64,14 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return $request->user();
+    }
+
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+
+        return [
+            'message' => 'Tokens Revoked'
+        ];
     }
 }
