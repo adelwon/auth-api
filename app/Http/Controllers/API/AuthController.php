@@ -34,7 +34,7 @@ class AuthController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))) {
 
             return response()->json([
-                'message' => 'Invalid login details'
+                'message' => trans('auth.failed')
             ], Response::HTTP_UNAUTHORIZED);
         }
         $user = User::query()->where('email', $request['email'])->firstOrFail();
@@ -51,7 +51,7 @@ class AuthController extends Controller
         auth()->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => trans('auth.logout')
         ]);
     }
 }
