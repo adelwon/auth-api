@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\QueryBuilders\UserBuilder;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -30,50 +30,40 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property-read Collection|PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
  * @method static UserFactory factory(...$parameters)
- * @method static Builder|User newModelQuery()
- * @method static Builder|User newQuery()
- * @method static Builder|User query()
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereEmail($value)
- * @method static Builder|User whereEmailVerifiedAt($value)
- * @method static Builder|User whereId($value)
- * @method static Builder|User whereName($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereUpdatedAt($value)
+ * @method static UserBuilder|User newModelQuery()
+ * @method static UserBuilder|User newQuery()
+ * @method static UserBuilder|User query()
+ * @method static UserBuilder|User whereCreatedAt($value)
+ * @method static UserBuilder|User whereEmail($value)
+ * @method static UserBuilder|User whereEmailVerifiedAt($value)
+ * @method static UserBuilder|User whereId($value)
+ * @method static UserBuilder|User whereName($value)
+ * @method static UserBuilder|User wherePassword($value)
+ * @method static UserBuilder|User whereRememberToken($value)
+ * @method static UserBuilder|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function newEloquentBuilder($query): UserBuilder
+    {
+        return new UserBuilder($query);
+    }
 }
