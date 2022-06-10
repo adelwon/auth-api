@@ -1,47 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(UserRegisterRequest $userRequest): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users|max:255',
-            'password' => 'required|min:10',
-        ]);
+        $user = User::query()->createFromDTO($userRequest->getUserDTO());
 
-        if ($validator->fails()) {
-            $errors = $validator->errors();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json([
-                'error' => $errors
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        if ($validator->passes()) {
-            $user = User::query()->create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password)
-            ]);
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
+        return response()->json(
+            [
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-            ]);
-        }
+            ],
+            Response::HTTP_CREATED
+        );
     }
 
     public function login(Request $request): JsonResponse
@@ -61,17 +46,12 @@ class AuthController extends Controller
         ]);
     }
 
-    public function me(Request $request)
-    {
-        return $request->user();
-    }
-
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
 
-        return [
-            'message' => 'Tokens Revoked'
-        ];
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
     }
 }
