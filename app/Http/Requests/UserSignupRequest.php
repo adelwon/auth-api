@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\DTO\UserDTO;
+use App\DTO\UserSignupDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRegisterRequest extends FormRequest
+class UserSignupRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [
@@ -25,20 +20,22 @@ class UserRegisterRequest extends FormRequest
             'email' => [
                 'required',
                 'unique:users',
+                'email',
                 'string',
                 'max:255'
             ],
             'password' => [
                 'required',
                 'string',
-                'min:8'
+                'min:8',
+                'confirmed'
             ]
         ];
     }
 
-    public function getUserDTO(): UserDTO
+    public function getUserSignupDTO(): UserSignupDTO
     {
-        return new UserDTO(
+        return new UserSignupDTO(
             $this->get('name'),
             $this->get('email'),
             $this->get('password')

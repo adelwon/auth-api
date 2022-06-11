@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\QueryBuilders;
 
+use App\DTO\UserSignupDTO;
 use App\Models\User;
-use App\DTO\UserDTO;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserBuilder extends Builder
 {
-    public function createFromDTO(UserDTO $userDTO): User
+    public function createFromDTO(UserSignupDTO $userSignupDTO): User
     {
         $user = new User();
-        $user->name = $userDTO->name;
-        $user->email = $userDTO->email;
-        $password = $userDTO->password;
+        $user->name = $userSignupDTO->name;
+        $user->email = $userSignupDTO->email;
+        $password = $userSignupDTO->password;
         $user->password = Hash::make($password);
         $user->save();
 
